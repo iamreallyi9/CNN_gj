@@ -10,14 +10,18 @@ mpl.rcParams['font.sans-serif']=['SimHei'] # 正常显示中文标签
 mpl.rcParams['axes.unicode_minus']=False # 正常显示正负号
 
 def load_image(path):
+    # 原始图像
     fig = plt.figure("Centre and Resize")
-    img = io.imread(path) 
-    img = img / 255.0 
-    
-    ax0 = fig.add_subplot(131)  
+    img = io.imread(path)
+    #像素归一化
+    img = img / 255.0
+
+    ax0 = fig.add_subplot(131)
     ax0.set_xlabel(u'Original Picture') 
     ax0.imshow(img) 
-    
+
+    #tip:[:2]切片，前闭后开，取得是[0]和[1]，即长和宽，[2]为通道，值为3
+    #选取图像中长和宽最小边，以此为基础构造出正方形
     short_edge = min(img.shape[:2]) 
     y = (img.shape[0] - short_edge) / 2  
     x = (img.shape[1] - short_edge) / 2 
@@ -26,13 +30,14 @@ def load_image(path):
     ax1 = fig.add_subplot(132) 
     ax1.set_xlabel(u"Centre Picture") 
     ax1.imshow(crop_img)
-    
+
+    #正方形图片[short_edge,short_edge]resiz==》合适大小，即[224,224]
     re_img = transform.resize(crop_img, (224, 224)) 
     
     ax2 = fig.add_subplot(133) 
     ax2.set_xlabel(u"Resize Picture") 
     ax2.imshow(re_img)
-	
+	#[224,224]reshape==》网络需要得尺寸[1,224,224,3]
     img_ready = re_img.reshape((1, 224, 224, 3))
 
     return img_ready
